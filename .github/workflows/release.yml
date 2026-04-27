@@ -33,10 +33,11 @@ jobs:
 
       - name: Bundle files
         run: |
-          mkdir -p ./temp/pulsar-characters/ui
+          mkdir -p ./temp/pulsar-characters
           cp ./{README.md,fxmanifest.lua} ./temp/pulsar-characters
           cp -r ./{client,server,shared} ./temp/pulsar-characters
-          cp -r ./ui/dist ./temp/pulsar-characters/ui/dist
+          cp -r ./ui ./temp/pulsar-characters/ui
+          rm -rf ./temp/pulsar-characters/ui/node_modules
           cd ./temp && zip -r ../pulsar-characters.zip ./pulsar-characters
 
       - name: Create release
