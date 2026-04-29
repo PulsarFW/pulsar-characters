@@ -41,7 +41,7 @@ function RegisterCallbacks()
 			Wait(1000)
 		end
 
-		local motd = GetConvar("motd", "Welcome to SandboxRP")
+		local motd = GetConvar("motd", "Welcome to Pulsar Framework")
 		local query = 'SELECT * FROM `changelogs` ORDER BY `date` DESC LIMIT 1'
 
 		MySQL.Async.fetchAll(query, {}, function(results)
