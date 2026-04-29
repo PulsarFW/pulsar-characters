@@ -1,64 +1,40 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { makeStyles } from '@mui/styles';
-import { Slide } from '@mui/material';
+import React from 'react';
 
-const useStyles = makeStyles((theme) => ({
-	container: {
-		position: 'absolute',
-		bottom: 0,
-		left: 0,
-		right: 0,
-		margin: 'auto',
-		height: 40,
-		width: 'fit-content',
-		pointerEvents: 'none',
-		display: 'flex',
-		zIndex: 1,
-		background: `${theme.palette.secondary.dark}80`,
-		borderLeft: `4px solid ${theme.palette.info.main}`,
-		'& small': {
-			fontSize: 12,
-			display: 'block',
-			lineHeight: '40px',
-			padding: '0 5px',
-		},
-	},
-	label: {
-		color: theme.palette.text.main,
-		fontSize: 18,
-		lineHeight: '40px',
-		textShadow: '0 0 5px #000',
-		paddingLeft: 5,
-		paddingRight: 15,
-		flex: 1,
-		borderLeft: `1px solid ${theme.palette.border.divider}`,
-		height: 'fit-content',
-		display: 'flex',
+const GOLD = '#E5A502';
 
-		'& .highlight': {
-			color: theme.palette.primary.main,
-			fontWeight: 'bold',
-			marginRight: 4,
-			'&:not(:first-of-type)': {
-				marginLeft: 2,
-			},
-		},
-	},
-}));
-
-export default ({ message }) => {
-	const classes = useStyles();
-	return (
-		<Slide direction="up" in={true}>
-			<div className={classes.container}>
-				<small>HELP</small>
-				<div className={classes.label}>
-					<span className="highlight">Double Click</span>
-					To Play As Character.
-					<span className="highlight">Right Click</span>
-					To Delete Character
-				</div>
-			</div>
-		</Slide>
-	);
-};
+export default () => (
+    <div style={{
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        margin: 'auto',
+        height: 40,
+        width: 'fit-content',
+        pointerEvents: 'none',
+        display: 'flex',
+        zIndex: 1,
+        background: 'rgba(15,15,15,0.8)',
+        borderLeft: '4px solid #247ba5',
+    }}>
+        <small style={{ fontSize: 12, display: 'block', lineHeight: '40px', padding: '0 5px', color: '#aaa' }}>
+            HELP
+        </small>
+        <div style={{
+            fontSize: 18,
+            lineHeight: '40px',
+            textShadow: '0 0 5px #000',
+            paddingLeft: 5,
+            paddingRight: 15,
+            borderLeft: '1px solid rgba(255,255,255,0.12)',
+            display: 'flex',
+            gap: 6,
+            alignItems: 'center',
+        }}>
+            <span style={{ color: GOLD, fontWeight: 'bold' }}>Double Click</span>
+            To Play As Character.
+            <span style={{ color: GOLD, fontWeight: 'bold' }}>Right Click</span>
+            To Delete Character
+        </div>
+    </div>
+);

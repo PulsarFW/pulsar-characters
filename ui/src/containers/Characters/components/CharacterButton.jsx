@@ -1,175 +1,111 @@
-/* eslint-disable react/prop-types */
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Moment from 'react-moment';
-import {
-	Fade,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	DialogTitle,
-	Button,
-} from '@mui/material';
-import { makeStyles } from '@mui/styles';
+import { Modal, Button, Group, Text } from '@mantine/core';
 
 import Nui from '../../../util/Nui';
 import { SelectCharacter, DeleteCharacter } from '../../../util/NuiEvents';
 
-const useStyles = makeStyles((theme) => ({
-	container: {
-		width: 300,
-		height: 100,
-		padding: 5,
-		lineHeight: '25px',
-		display: 'inline-flex',
-		background: `${theme.palette.secondary.dark}80`,
-		borderLeft: `2px solid ${theme.palette.secondary.light}`,
-		transition: 'border ease-in 0.15s',
-		userSelect: "none",
-		'&:not(:last-of-type)': {
-			marginRight: 4,
-		},
-		'&.active': {
-			borderColor: theme.palette.primary.main,
-		},
-		'&:hover': {
-			borderColor: theme.palette.primary.dark,
-			cursor: 'pointer',
-		},
-	},
-	stateId: {
-		width: 48,
-		display: 'block',
-		fontSize: 18,
-		padding: 5,
-		paddingLeft: 0,
-		textAlign: 'center',
-		borderRight: `1px solid ${theme.palette.border.divider}`,
-		lineHeight: '85px',
-	},
-	details: {
-		padding: 5,
-	},
-	detail: {
-		lineHeight: '24px',
-		'&.name': {
-			fontSize: 18,
-		},
-		'&.job': {
-			fontSize: 14,
-		},
-		'&.played': {
-			fontSize: 14,
-			'& small': {
-				fontSize: 12,
-			},
-		},
-	},
-}));
+const GOLD = '#E5A502';
+const BORDER_DIM = 'rgba(255,255,255,0.12)';
+const CARD_BG = 'rgba(15,15,15,0.5)';
 
 export default ({ character }) => {
-	const classes = useStyles();
-	const dispatch = useDispatch();
-	const selected = useSelector((state) => state.characters.selected);
+    const dispatch = useDispatch();
+    const selected = useSelector((state) => state.characters.selected);
+    const [open, setOpen] = useState(false);
 
-	const [open, setOpen] = useState(false);
+    const isActive = selected?.ID === character?.ID;
 
-	const onClick = () => {
-		dispatch({
-			type: 'LOADING_SHOW',
-			payload: { message: 'Getting Spawn Points' },
-		});
-		dispatch({
-			type: 'SELECT_CHARACTER',
-			payload: {
-				character: character,
-			},
-		});
-		Nui.send(SelectCharacter, { id: character.ID });
-	};
+    const onClick = () => {
+        dispatch({ type: 'LOADING_SHOW', payload: { message: 'Getting Spawn Points' } });
+        dispatch({ type: 'SELECT_CHARACTER', payload: { character } });
+        Nui.send(SelectCharacter, { id: character.ID });
+    };
 
-	const onRightClick = (e) => {
-		e.preventDefault();
-		setOpen(true);
-	};
+    const onDelete = () => {
+        dispatch({ type: 'LOADING_SHOW', payload: { message: 'Deleting Character' } });
+        Nui.send(DeleteCharacter, { id: character.ID });
+    };
 
-	const onDelete = () => {
-		dispatch({
-			type: 'LOADING_SHOW',
-			payload: { message: 'Deleting Character' },
-		});
-		Nui.send(DeleteCharacter, { id: character.ID });
-	};
+    const jobLabel = () => {
+        if (!character?.Jobs || character.Jobs.length === 0) return 'Unemployed';
+        if (character.Jobs.length === 1) {
+            const j = character.Jobs[0];
+            return j.Workplace
+                ? `${j.Workplace.Name} - ${j.Grade.Name}`
+                : `${j.Name} - ${j.Grade.Name}`;
+        }
+        return `${character.Jobs.length} Jobs`;
+    };
 
-	return (
-		<Fade in={true}>
-			<div
-				className={`${classes.container} ${
-					selected?.ID == character?.ID ? 'active' : ''
-				}`}
-				onDoubleClick={onClick}
-				onContextMenu={onRightClick}
-			>
-				<div className={classes.stateId}>{character.SID}</div>
-				<div className={classes.details}>
-					<div className={`${classes.detail} name`}>
-						{character.First} {character.Last}
-					</div>
-					<div className={`${classes.detail} job`}>
-						{!Boolean(character?.Jobs) ||
-						character?.Jobs?.length == 0 ? (
-							<span>Unemployed</span>
-						) : character?.Jobs?.length == 1 ? (
-							<span>
-								{character?.Jobs[0].Workplace
-									? `${character?.Jobs[0].Workplace.Name} - ${character?.Jobs[0].Grade.Name}`
-									: `${character?.Jobs[0].Name} - ${character?.Jobs[0].Grade.Name}`}
-							</span>
-						) : (
-							<span>{character?.Jobs?.length} Jobs</span>
-						)}
-					</div>
-					<div className={`${classes.detail} played`}>
-						Last Played:{' '}
-						{+character.LastPlayed === -1 ? (
-							<span className={classes.highlight}>Never</span>
-						) : (
-							<span className={classes.highlight}>
-								<small>
-									<Moment
-										date={+character.LastPlayed}
-										format="M/D/YYYY h:mm:ss A"
-										withTitle
-									/>
-								</small>
-							</span>
-						)}
-					</div>
-				</div>
-				<Dialog open={open} onClose={() => setOpen(false)}>
-					<DialogTitle>{`Delete ${character.First} ${character.Last}?`}</DialogTitle>
-					<DialogContent>
-						<DialogContentText>
-							Are you sure you want to delete {character.First}{' '}
-							{character.Last}? This action is completely &
-							entirely irreversible by{' '}
-							<i>
-								<b>anyone</b>
-							</i>{' '}
-							including staff. Proceed?
-						</DialogContentText>
-					</DialogContent>
-					<DialogActions>
-						<Button onClick={() => setOpen(false)} color="inherit">
-							No
-						</Button>
-						<Button onClick={onDelete} color="primary" autoFocus>
-							Yes
-						</Button>
-					</DialogActions>
-				</Dialog>
-			</div>
-		</Fade>
-	);
+    const lastPlayed = () => {
+        if (+character.LastPlayed === -1) return 'Never';
+        return new Date(+character.LastPlayed).toLocaleDateString('en-US', {
+            month: 'numeric', day: 'numeric', year: 'numeric',
+            hour: 'numeric', minute: '2-digit', second: '2-digit',
+        });
+    };
+
+    return (
+        <>
+            <div
+                onDoubleClick={onClick}
+                onContextMenu={(e) => { e.preventDefault(); setOpen(true); }}
+                style={{
+                    width: 300,
+                    height: 100,
+                    padding: 5,
+                    display: 'inline-flex',
+                    background: CARD_BG,
+                    borderLeft: `2px solid ${isActive ? GOLD : '#1c1c1c'}`,
+                    transition: 'border-color 0.15s ease-in',
+                    userSelect: 'none',
+                    cursor: 'pointer',
+                    flexShrink: 0,
+                }}
+                onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.borderColor = '#FA5800'; }}
+                onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.borderColor = '#1c1c1c'; }}
+            >
+                <div style={{
+                    width: 48,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 18,
+                    borderRight: `1px solid ${BORDER_DIM}`,
+                    flexShrink: 0,
+                }}>
+                    {character.SID}
+                </div>
+                <div style={{ padding: 5, overflow: 'hidden' }}>
+                    <div style={{ fontSize: 18, lineHeight: '24px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {character.First} {character.Last}
+                    </div>
+                    <div style={{ fontSize: 14, lineHeight: '24px', color: '#aaa', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {jobLabel()}
+                    </div>
+                    <div style={{ fontSize: 13, lineHeight: '24px', color: '#888' }}>
+                        Last: {lastPlayed()}
+                    </div>
+                </div>
+            </div>
+
+            <Modal
+                opened={open}
+                onClose={() => setOpen(false)}
+                title={`Delete ${character.First} ${character.Last}?`}
+                centered
+                size="sm"
+            >
+                <Text size="sm" c="dimmed">
+                    Are you sure you want to delete {character.First} {character.Last}?
+                    This action is completely & entirely irreversible by <i><b>anyone</b></i> including staff.
+                </Text>
+                <Group justify="flex-end" mt="md">
+                    <Button variant="subtle" color="gray" onClick={() => setOpen(false)}>No</Button>
+                    <Button color="red" onClick={onDelete}>Yes, Delete</Button>
+                </Group>
+            </Modal>
+        </>
+    );
 };

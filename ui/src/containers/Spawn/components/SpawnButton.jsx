@@ -1,85 +1,59 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Fade } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { SelectSpawn } from '../../../util/NuiEvents';
 import Nui from '../../../util/Nui';
 
-const useStyles = makeStyles((theme) => ({
-	container: {
-		width: 300,
-		height: 50,
-		padding: 5,
-		lineHeight: '25px',
-		display: 'flex',
-		background: `${theme.palette.secondary.dark}80`,
-		borderLeft: `2px solid ${theme.palette.secondary.light}`,
-		transition: 'border ease-in 0.15s',
-		userSelect: "none",
-		'&:not(:last-of-type)': {
-			marginBottom: 4,
-		},
-		'&.active': {
-			borderColor: theme.palette.primary.main,
-		},
-		'&:hover': {
-			borderColor: theme.palette.primary.dark,
-			cursor: 'pointer',
-		},
-	},
-	spawnIcon: {
-		width: 48,
-		display: 'block',
-		fontSize: 18,
-		padding: 5,
-		paddingLeft: 0,
-		textAlign: 'center',
-		borderRight: `1px solid ${theme.palette.border.divider}`,
-		lineHeight: '35px',
-	},
-	details: {
-		padding: 5,
-	},
-	detail: {
-		lineHeight: '35px',
-		fontSize: 18,
-	},
-}));
+const GOLD = '#E5A502';
+const BORDER_DIM = 'rgba(255,255,255,0.12)';
 
 export default ({ spawn, onPlay }) => {
-	const classes = useStyles();
-	const dispatch = useDispatch();
-	const selected = useSelector((state) => state.spawn.selected);
+    const dispatch = useDispatch();
+    const selected = useSelector((state) => state.spawn.selected);
 
-	const onClick = () => {
-		Nui.send(SelectSpawn, { spawn });
-		dispatch({
-			type: 'SELECT_SPAWN',
-			payload: spawn,
-		});
-	};
+    const isActive = selected?.id === spawn?.id;
 
-	return (
-		<Fade in={true}>
-			<div
-				className={`${classes.container} ${
-					selected?.id == spawn?.id ? 'active' : ''
-				}`}
-				onDoubleClick={onPlay}
-				onClick={onClick}
-			>
-				<div className={classes.spawnIcon}>
-					<FontAwesomeIcon
-						icon={Boolean(spawn.icon) ? spawn.icon : 'location-dot'}
-					/>
-				</div>
-				<div className={classes.details}>
-					<div className={classes.detail}>{spawn.label}</div>
-				</div>
-			</div>
-		</Fade>
-	);
+    const onClick = () => {
+        Nui.send(SelectSpawn, { spawn });
+        dispatch({ type: 'SELECT_SPAWN', payload: spawn });
+    };
+
+    return (
+        <div
+            onClick={onClick}
+            onDoubleClick={onPlay}
+            style={{
+                width: 300,
+                height: 50,
+                padding: 5,
+                display: 'flex',
+                alignItems: 'center',
+                background: 'rgba(15,15,15,0.5)',
+                borderLeft: `2px solid ${isActive ? GOLD : '#1c1c1c'}`,
+                transition: 'border-color 0.15s ease-in',
+                userSelect: 'none',
+                cursor: 'pointer',
+                marginBottom: 4,
+            }}
+            onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.borderColor = '#FA5800'; }}
+            onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.borderColor = '#1c1c1c'; }}
+        >
+            <div style={{
+                width: 48,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 18,
+                borderRight: `1px solid ${BORDER_DIM}`,
+                flexShrink: 0,
+                alignSelf: 'stretch',
+            }}>
+                <FontAwesomeIcon icon={spawn.icon || 'location-dot'} />
+            </div>
+            <div style={{ padding: '0 10px', fontSize: 18, lineHeight: '35px' }}>
+                {spawn.label}
+            </div>
+        </div>
+    );
 };

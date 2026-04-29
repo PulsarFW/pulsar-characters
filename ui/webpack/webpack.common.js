@@ -23,9 +23,7 @@ module.exports = options => ({
         minimizer: [
             new TerserPlugin({
                 terserOptions: {
-                    format: {
-                        comments: false,
-                    },
+                    format: { comments: false },
                 },
                 extractComments: false,
             }),
@@ -37,27 +35,19 @@ module.exports = options => ({
             {
                 test: /\.tsx?$/,
                 exclude: /node_modules/,
-                use: {
-                    loader: 'ts-loader',
-                    options: {
-                        transpileOnly: true,
-                    },
-                },
+                use: { loader: 'ts-loader', options: { transpileOnly: true } },
             },
             {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader',
-                },
+                use: { loader: 'babel-loader' },
             },
             {
                 test: /\.css$/,
                 exclude: /node_modules/,
-                use: ['style-loader', 'css-loader'],
+                use: ['style-loader', 'css-loader', 'postcss-loader'],
             },
             {
-                // Preprocess 3rd party .css files located in node_modules
                 test: /\.css$/,
                 include: /node_modules/,
                 use: ['style-loader', 'css-loader'],
@@ -72,46 +62,27 @@ module.exports = options => ({
             },
             {
                 test: /\.svg$/,
-                use: [
-                    {
-                        loader: 'svg-url-loader',
-                        options: {
-                            // Inline files smaller than 10 kB
-                            limit: 10 * 1024,
-                            noquotes: true,
-                        },
-                    },
-                ],
+                use: [{
+                    loader: 'svg-url-loader',
+                    options: { limit: 10 * 1024, noquotes: true },
+                }],
             },
             {
                 test: /\.(jpg|png|webp|gif|gifv)$/,
-                use: {
-                    loader: 'url-loader',
-                },
-            },
-            {
-                test: /\.(mp4|webm)$/,
-                use: {
-                    loader: 'url-loader',
-                    options: {
-                        limit: 10000,
-                    },
-                },
+                use: { loader: 'url-loader' },
             },
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
-                use: [
-                    {
-                        loader: `ifdef-loader`,
-                        options: {
-                            DEBUG: options.mode !== 'production',
-                            version: 3,
-                            'ifdef-verbose': true, // add this for verbose output
-                            'ifdef-triple-slash': true, // add this to use double slash comment instead of default triple slash
-                        },
+                use: [{
+                    loader: 'ifdef-loader',
+                    options: {
+                        DEBUG: options.mode !== 'production',
+                        version: 3,
+                        'ifdef-verbose': true,
+                        'ifdef-triple-slash': true,
                     },
-                ],
+                }],
             },
         ],
     },
