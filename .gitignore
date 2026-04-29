@@ -3,3 +3,4 @@ ui/dist/
 .idea/
 .vscode/
 *.cfg
+package-lock.json
