@@ -1,63 +1,55 @@
-name: Release
+name: Create release
 
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: "Version number (e.g. 1.2.0)"
-        required: true
+  push:
+    tags:
+      - 'v*.*.*'
 
 permissions:
   contents: write
 
 jobs:
-  release:
+  create-release:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
+      - name: Install zip
+        run: sudo apt install zip
+
+      - name: Get latest code
         uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          fetch-depth: 0
+          node-version: '20'
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        run: npm install
+        working-directory: ui
 
-      - name: Install and build
+      - name: Build UI
+        run: npm run build
+        working-directory: ui
+
+      - name: Bundle files
         run: |
-          cd ui
-          bun install
-          bun run build
+          mkdir -p ./temp/pulsar-characters
+          cp ./{README.md,fxmanifest.lua} ./temp/pulsar-characters
+          cp -r ./{client,server,shared} ./temp/pulsar-characters
+          cp -r ./ui ./temp/pulsar-characters/ui
+          rm -rf ./temp/pulsar-characters/ui/node_modules
+          cd ./temp && zip -r ../pulsar-characters.zip ./pulsar-characters
 
-      - name: Get release name
-        id: info
-        run: |
-          REPO="${{ github.event.repository.name }}"
-          echo "upper=${REPO^^}" >> $GITHUB_OUTPUT
-
-      - name: Create zip
-        run: |
-          zip -r pulsar-characters.zip .             --exclude='*/.git/*'             --exclude='*/.github/*'             --exclude='*/node_modules/*'
-
-      - name: Configure git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Create and push tag
-        run: |
-          git tag v${{ github.event.inputs.version }}
-          git push origin v${{ github.event.inputs.version }}
-
-      - name: Create GitHub Release
+      - name: Create release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ github.event.inputs.version }}
-          name: "${{ steps.info.outputs.upper }} ${{ github.event.inputs.version }}"
+          name: "PULSAR-CHARACTERS ${{ github.ref_name }}"
           body: |
-            ![${{ steps.info.outputs.upper }}](https://r2.fivemanage.com/GPYOH8Hq4GPyAY7czrgLe/pulsarbanner.png)
+            ![Pulsar Framework](https://r2.fivemanage.com/GPYOH8Hq4GPyAY7czrgLe/pulsarbanner.png)
 
-            ## ${{ steps.info.outputs.upper }} ${{ github.event.inputs.version }}
+            ## PULSAR-CHARACTERS ${{ github.ref_name }}
+
+            Character creation, selection, and lifecycle management for Pulsar Framework.
 
             ### Installation
             1. Download `pulsar-characters.zip` below
@@ -69,4 +61,3 @@ jobs:
             ![Built for FiveM](https://img.shields.io/badge/Built_for-FiveM-F40552?style=flat-square)
           files: pulsar-characters.zip
           prerelease: false
-          token: ${{ secrets.GITHUB_TOKEN }}
