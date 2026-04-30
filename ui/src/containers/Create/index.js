@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { TextInput, Textarea, Select, Button, Stack } from '@mantine/core';
+import { Box, Flex, Stack, Text, TextInput, Textarea, Select, Button } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { getCodeList } from 'country-list';
 import dayjs from 'dayjs';
@@ -81,19 +81,20 @@ const INPUT_STYLES = {
     },
 };
 
-/* Corner bracket component */
 const Corner = ({ top, left, right, bottom }) => (
-    <div style={{
-        position: 'absolute',
-        top, left, right, bottom,
-        width: 18,
-        height: 18,
-        borderTop: top !== undefined ? `2px solid ${ACCENT}` : undefined,
-        borderBottom: bottom !== undefined ? `2px solid ${ACCENT}` : undefined,
-        borderLeft: left !== undefined ? `2px solid ${ACCENT}` : undefined,
-        borderRight: right !== undefined ? `2px solid ${ACCENT}` : undefined,
-        opacity: 0.7,
-    }} />
+    <Box
+        style={{
+            position: 'absolute',
+            top, left, right, bottom,
+            width: 18,
+            height: 18,
+            borderTop: top !== undefined ? `2px solid ${ACCENT}` : undefined,
+            borderBottom: bottom !== undefined ? `2px solid ${ACCENT}` : undefined,
+            borderLeft: left !== undefined ? `2px solid ${ACCENT}` : undefined,
+            borderRight: right !== undefined ? `2px solid ${ACCENT}` : undefined,
+            opacity: 0.7,
+        }}
+    />
 );
 
 export default () => {
@@ -128,112 +129,89 @@ export default () => {
     const goBack = () => dispatch({ type: 'SET_STATE', payload: { state: STATE_CHARACTERS } });
 
     return (
-        <div style={{
-            height: '100vh',
-            width: '100vw',
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            paddingRight: '10%',
-        }}>
-            <div style={{
-                width: CREATE_PANEL_WIDTH,
-                maxHeight: '88vh',
-                position: 'relative',
-                display: 'flex',
-                flexDirection: 'column',
-                background: BG_BASE,
-                animation: 'slideInRight 0.38s cubic-bezier(0.22,1,0.36,1)',
-                animationFillMode: 'both',
-            }}>
-                {/* Corner brackets */}
+        <Flex
+            align="center"
+            justify="flex-end"
+            style={{ height: '100vh', width: '100vw', position: 'relative', paddingRight: '10%' }}
+        >
+            <Box
+                style={{
+                    width: CREATE_PANEL_WIDTH,
+                    maxHeight: '88vh',
+                    position: 'relative',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    background: BG_BASE,
+                    animation: 'slideInRight 0.38s cubic-bezier(0.22,1,0.36,1)',
+                    animationFillMode: 'both',
+                }}
+            >
                 <Corner top={0} left={0} />
                 <Corner top={0} right={0} />
                 <Corner bottom={0} left={0} />
                 <Corner bottom={0} right={0} />
 
-                {/* Thin top accent line */}
-                <div style={{
-                    height: 1,
-                    background: `linear-gradient(90deg, ${ACCENT}, transparent)`,
-                    opacity: 0.4,
-                }} />
+                {/* Top accent line */}
+                <Box style={{ height: 1, background: `linear-gradient(90deg, ${ACCENT}, transparent)`, opacity: 0.4 }} />
 
                 {/* Header */}
-                <div style={{
-                    padding: '22px 28px 20px',
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    justifyContent: 'space-between',
-                    borderBottom: `1px solid ${BORDER_SUBTLE}`,
-                    flexShrink: 0,
-                }}>
-                    <div>
-                        <div style={{
-                            fontSize: 10,
-                            letterSpacing: '4px',
-                            color: ACCENT,
-                            fontWeight: 700,
-                            textTransform: 'uppercase',
-                            marginBottom: 8,
-                            opacity: 0.8,
-                        }}>
+                <Flex
+                    align="flex-start"
+                    justify="space-between"
+                    style={{ padding: '22px 28px 20px', borderBottom: `1px solid ${BORDER_SUBTLE}`, flexShrink: 0 }}
+                >
+                    <Stack gap={8}>
+                        <Text
+                            fz={10}
+                            fw={700}
+                            tt="uppercase"
+                            c={ACCENT}
+                            style={{ letterSpacing: '4px', opacity: 0.8 }}
+                        >
                             Pulsar Framework
-                        </div>
-                        <div style={{
-                            fontSize: 28,
-                            fontWeight: 700,
-                            color: TEXT_PRIMARY,
-                            letterSpacing: '-0.3px',
-                            lineHeight: 1,
-                        }}>
+                        </Text>
+                        <Text fw={700} c={TEXT_PRIMARY} style={{ fontSize: 28, letterSpacing: '-0.3px', lineHeight: 1 }}>
                             New Character
-                        </div>
-                    </div>
+                        </Text>
+                    </Stack>
 
-                    <button
+                    <Button
+                        variant="subtle"
                         onClick={goBack}
                         style={{
-                            background: 'none',
                             border: `1px solid ${BORDER_DIM}`,
                             color: TEXT_DIM,
-                            cursor: 'pointer',
                             width: 30,
                             height: 30,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: 12,
-                            fontFamily: 'Source Sans Pro, sans-serif',
-                            transition: 'all 0.15s ease',
+                            padding: 0,
+                            minWidth: 0,
                             flexShrink: 0,
                             marginTop: 2,
+                            background: 'none',
+                            fontSize: 12,
                         }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.color = ACCENT;
-                            e.currentTarget.style.borderColor = ACCENT_DIM;
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.color = TEXT_DIM;
-                            e.currentTarget.style.borderColor = BORDER_DIM;
+                        styles={{
+                            root: {
+                                '&:hover': { color: ACCENT, borderColor: ACCENT_DIM, background: 'none' },
+                            },
                         }}
                     >
                         <FontAwesomeIcon icon="xmark" />
-                    </button>
-                </div>
+                    </Button>
+                </Flex>
 
                 {/* Form */}
-                <div style={{ flex: 1, overflowY: 'auto', padding: '26px 28px 10px' }}>
+                <Box style={{ flex: 1, overflowY: 'auto', padding: '26px 28px 10px' }}>
                     <form id="createForm" onSubmit={onSubmit} autoComplete="off">
                         <Stack gap={20}>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                            <Flex gap={16}>
                                 <TextInput
                                     required
                                     label="First Name"
                                     value={state.first}
                                     onChange={(e) => set('first')(e.target.value.replace(/\s/g, ''))}
                                     styles={INPUT_STYLES}
+                                    style={{ flex: 1 }}
                                 />
                                 <TextInput
                                     required
@@ -241,8 +219,9 @@ export default () => {
                                     value={state.last}
                                     onChange={(e) => set('last')(e.target.value.replace(/\s/g, ''))}
                                     styles={INPUT_STYLES}
+                                    style={{ flex: 1 }}
                                 />
-                            </div>
+                            </Flex>
 
                             <Select
                                 label="Country of Origin"
@@ -255,7 +234,7 @@ export default () => {
                                 styles={INPUT_STYLES}
                             />
 
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                            <Flex gap={16}>
                                 <Select
                                     required
                                     label="Gender"
@@ -265,6 +244,7 @@ export default () => {
                                     allowDeselect={false}
                                     size="md"
                                     styles={INPUT_STYLES}
+                                    style={{ flex: 1 }}
                                 />
                                 <DatePickerInput
                                     required
@@ -276,8 +256,9 @@ export default () => {
                                     valueFormat="MM/DD/YYYY"
                                     size="md"
                                     styles={INPUT_STYLES}
+                                    style={{ flex: 1 }}
                                 />
-                            </div>
+                            </Flex>
 
                             <Textarea
                                 required
@@ -289,17 +270,14 @@ export default () => {
                             />
                         </Stack>
                     </form>
-                </div>
+                </Box>
 
                 {/* Footer */}
-                <div style={{
-                    padding: '16px 28px 22px',
-                    borderTop: `1px solid ${BORDER_SUBTLE}`,
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    gap: 10,
-                    flexShrink: 0,
-                }}>
+                <Flex
+                    justify="flex-end"
+                    gap={10}
+                    style={{ padding: '16px 28px 22px', borderTop: `1px solid ${BORDER_SUBTLE}`, flexShrink: 0 }}
+                >
                     <Button variant="subtle" color="gray" radius={2} size="sm" onClick={goBack}>
                         Cancel
                     </Button>
@@ -313,15 +291,11 @@ export default () => {
                     >
                         Create
                     </Button>
-                </div>
+                </Flex>
 
                 {/* Bottom accent line */}
-                <div style={{
-                    height: 1,
-                    background: `linear-gradient(90deg, transparent, ${ACCENT})`,
-                    opacity: 0.3,
-                }} />
-            </div>
-        </div>
+                <Box style={{ height: 1, background: `linear-gradient(90deg, transparent, ${ACCENT})`, opacity: 0.3 }} />
+            </Box>
+        </Flex>
     );
 };

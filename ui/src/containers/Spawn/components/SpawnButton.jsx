@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Box, Flex, Text } from '@mantine/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { SelectSpawn } from '../../../util/NuiEvents';
@@ -19,14 +20,13 @@ export default ({ spawn, onPlay, index }) => {
     };
 
     return (
-        <div
+        <Flex
+            align="center"
             onClick={onClick}
             onDoubleClick={onPlay}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             style={{
-                display: 'flex',
-                alignItems: 'center',
                 height: 54,
                 position: 'relative',
                 background: isActive ? BG_ACTIVE : hovered ? 'rgba(255,255,255,0.03)' : 'transparent',
@@ -40,51 +40,53 @@ export default ({ spawn, onPlay, index }) => {
             }}
         >
             {/* Active left bar */}
-            <div style={{
-                position: 'absolute',
-                left: 0, top: 0, bottom: 0,
-                width: 2,
-                background: ACCENT,
-                opacity: isActive ? 1 : 0,
-                transition: 'opacity 0.15s ease',
-            }} />
+            <Box
+                style={{
+                    position: 'absolute',
+                    left: 0, top: 0, bottom: 0,
+                    width: 2,
+                    background: ACCENT,
+                    opacity: isActive ? 1 : 0,
+                    transition: 'opacity 0.15s ease',
+                }}
+            />
 
             {/* Icon */}
-            <div style={{
-                width: 54,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 12,
-                color: isActive ? ACCENT : hovered ? TEXT_SECONDARY : TEXT_FAINT,
-                flexShrink: 0,
-                transition: 'color 0.15s ease',
-            }}>
+            <Flex
+                align="center"
+                justify="center"
+                style={{
+                    width: 54,
+                    fontSize: 12,
+                    color: isActive ? ACCENT : hovered ? TEXT_SECONDARY : TEXT_FAINT,
+                    flexShrink: 0,
+                    transition: 'color 0.15s ease',
+                }}
+            >
                 <FontAwesomeIcon icon={spawn.icon || 'location-dot'} />
-            </div>
+            </Flex>
 
             {/* Label */}
-            <div style={{ flex: 1, paddingRight: 16 }}>
-                <div style={{
-                    fontSize: 13,
-                    fontWeight: isActive ? 600 : 400,
-                    color: isActive ? TEXT_PRIMARY : hovered ? TEXT_SECONDARY : TEXT_FAINT,
-                    transition: 'color 0.15s ease',
-                }}>
+            <Box style={{ flex: 1, paddingRight: 16 }}>
+                <Text
+                    fz={13}
+                    fw={isActive ? 600 : 400}
+                    c={isActive ? TEXT_PRIMARY : hovered ? TEXT_SECONDARY : TEXT_FAINT}
+                    style={{ transition: 'color 0.15s ease' }}
+                >
                     {spawn.label}
-                </div>
+                </Text>
                 {isActive && (
-                    <div style={{
-                        fontSize: 9,
-                        color: TEXT_FAINT,
-                        letterSpacing: '1.5px',
-                        textTransform: 'uppercase',
-                        marginTop: 2,
-                    }}>
+                    <Text
+                        fz={9}
+                        c={TEXT_FAINT}
+                        tt="uppercase"
+                        style={{ letterSpacing: '1.5px', marginTop: 2 }}
+                    >
                         Double click to play
-                    </div>
+                    </Text>
                 )}
-            </div>
-        </div>
+            </Box>
+        </Flex>
     );
 };

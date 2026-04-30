@@ -1,10 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { Box, Flex, Text } from '@mantine/core';
 
 import { Motd } from '../../components';
-import { TEXT_DIM, TEXT_SECONDARY, TEXT_FAINT } from '../../theme';
 import CharacterButton from './components/CharacterButton';
 import CreateCharacter from './components/CreateCharacter';
+import { TEXT_DIM, TEXT_SECONDARY, TEXT_FAINT } from '../../theme';
 
 export default () => {
     const characters = useSelector((state) => state.characters.characters);
@@ -12,49 +13,45 @@ export default () => {
     const motd = useSelector((state) => state.characters.motd);
 
     return (
-        <div style={{
-            height: '100vh',
-            width: '100vw',
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'flex-end',
-            justifyContent: 'flex-start',
-        }}>
-            {Boolean(motd) && <Motd message={motd} />}
-
-            {/* Card row — bottom-left, offset so ped has room on the right */}
-            <div style={{
+        <Box
+            style={{
+                height: '100vh',
+                width: '100vw',
+                position: 'relative',
                 display: 'flex',
                 alignItems: 'flex-end',
-                gap: 10,
-                paddingLeft: 60,
-                paddingBottom: 72,
-            }}>
+                justifyContent: 'flex-start',
+            }}
+        >
+            {Boolean(motd) && <Motd message={motd} />}
+
+            <Flex align="flex-end" gap={10} pl={60} pb={72}>
                 {characters.map((char, i) => (
-                    <CharacterButton key={char.ID} character={char} index={i} />
+                    <CharacterButton key={`char-${char.ID ?? i}`} character={char} index={i} />
                 ))}
                 {characters.length < characterLimit && (
                     <CreateCharacter index={characters.length} />
                 )}
-            </div>
+            </Flex>
 
-            {/* Help footer */}
-            <div style={{
-                position: 'absolute',
-                bottom: 22,
-                display: 'flex',
-                gap: 18,
-                fontSize: 10,
-                color: TEXT_DIM,
-                letterSpacing: '0.8px',
-                pointerEvents: 'none',
-                left: '50%',
-                transform: 'translateX(-50%)',
-            }}>
-                <span><span style={{ color: TEXT_SECONDARY }}>DOUBLE CLICK</span> to play</span>
-                <span style={{ color: TEXT_FAINT }}>·</span>
-                <span><span style={{ color: TEXT_SECONDARY }}>RIGHT CLICK</span> to delete</span>
-            </div>
-        </div>
+            <Flex
+                gap={18}
+                style={{
+                    position: 'absolute',
+                    bottom: 22,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    pointerEvents: 'none',
+                }}
+            >
+                <Text fz={10} c={TEXT_DIM} style={{ letterSpacing: '0.8px' }}>
+                    <Text component="span" c={TEXT_SECONDARY}>DOUBLE CLICK</Text> to play
+                </Text>
+                <Text fz={10} c={TEXT_FAINT} style={{ letterSpacing: '0.8px' }}>·</Text>
+                <Text fz={10} c={TEXT_DIM} style={{ letterSpacing: '0.8px' }}>
+                    <Text component="span" c={TEXT_SECONDARY}>RIGHT CLICK</Text> to delete
+                </Text>
+            </Flex>
+        </Box>
     );
 };

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Transition } from '@mantine/core';
+import { Box, Stack, Text, Image, Transition } from '@mantine/core';
 
 import Nui from '../../util/Nui';
 import { GetData } from '../../util/NuiEvents';
@@ -26,17 +26,19 @@ export default () => {
     return (
         <Transition mounted={show} transition="fade" duration={600} onExited={onExited}>
             {(styles) => (
-                <div style={{
-                    ...styles,
-                    position: 'absolute',
-                    inset: 0,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 1000,
-                    pointerEvents: 'all',
-                }}>
+                <Box
+                    style={{
+                        ...styles,
+                        position: 'absolute',
+                        inset: 0,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        zIndex: 1000,
+                        pointerEvents: 'all',
+                    }}
+                >
                     {/* Corner brackets */}
                     {[
                         { top: 28, left: 28, borderTop: `1px solid ${ACCENT}`, borderLeft: `1px solid ${ACCENT}` },
@@ -44,9 +46,10 @@ export default () => {
                         { bottom: 28, left: 28, borderBottom: `1px solid ${ACCENT}`, borderLeft: `1px solid ${ACCENT}` },
                         { bottom: 28, right: 28, borderBottom: `1px solid ${ACCENT}`, borderRight: `1px solid ${ACCENT}` },
                     ].map((style, i) => (
-                        <div key={i} style={{
+                        <Box key={`corner-${i}`} style={{
                             position: 'absolute',
-                            width: 36, height: 36,
+                            width: 36,
+                            height: 36,
                             opacity: 0.4,
                             animation: 'cornerPulse 3s ease-in-out infinite',
                             animationDelay: `${i * 0.6}s`,
@@ -54,17 +57,16 @@ export default () => {
                         }} />
                     ))}
 
-                    {/* Center content */}
-                    <div style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        animation: 'fadeInUp 0.9s ease',
-                        animationFillMode: 'both',
-                        animationDelay: '0.15s',
-                    }}>
-                        {/* Icon logo */}
-                        <img
+                    <Stack
+                        align="center"
+                        gap={0}
+                        style={{
+                            animation: 'fadeInUp 0.9s ease',
+                            animationFillMode: 'both',
+                            animationDelay: '0.15s',
+                        }}
+                    >
+                        <Image
                             src={LOGO}
                             alt="Pulsar"
                             style={{
@@ -76,27 +78,29 @@ export default () => {
                             }}
                         />
 
-                        {/* Thin rule */}
-                        <div style={{
-                            height: 2,
-                            width: 320,
-                            background: `linear-gradient(90deg, transparent, ${ACCENT}, transparent)`,
-                            marginBottom: 36,
-                        }} />
+                        <Box
+                            style={{
+                                height: 2,
+                                width: 320,
+                                background: `linear-gradient(90deg, transparent, ${ACCENT}, transparent)`,
+                                marginBottom: 36,
+                            }}
+                        />
 
-                        {/* Press any key */}
-                        <div style={{
-                            fontSize: 15,
-                            letterSpacing: '6px',
-                            color: TEXT_PRIMARY,
-                            textTransform: 'uppercase',
-                            fontWeight: 600,
-                            animation: 'blinker 1.6s step-end infinite',
-                        }}>
+                        <Text
+                            fz={15}
+                            fw={600}
+                            tt="uppercase"
+                            c={TEXT_PRIMARY}
+                            style={{
+                                letterSpacing: '6px',
+                                animation: 'blinker 1.6s step-end infinite',
+                            }}
+                        >
                             Press Any Key
-                        </div>
-                    </div>
-                </div>
+                        </Text>
+                    </Stack>
+                </Box>
             )}
         </Transition>
     );

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { Box, Center, Stack, Flex, Text, Image } from '@mantine/core';
 
 import { ACCENT, TEXT_DIM, LOGO } from '../../theme';
 
@@ -10,26 +11,23 @@ export default () => {
     if (!loading) return null;
 
     return (
-        <div style={{
-            position: 'absolute',
-            inset: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 900,
-            pointerEvents: 'none',
-        }}>
-            <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: 0,
-                animation: 'fadeInUp 0.5s ease',
-                animationFillMode: 'both',
-            }}>
-                {/* Logo */}
-                <img
+        <Center
+            style={{
+                position: 'absolute',
+                inset: 0,
+                zIndex: 900,
+                pointerEvents: 'none',
+            }}
+        >
+            <Stack
+                align="center"
+                gap={0}
+                style={{
+                    animation: 'fadeInUp 0.5s ease',
+                    animationFillMode: 'both',
+                }}
+            >
+                <Image
                     src={LOGO}
                     alt="Pulsar"
                     style={{
@@ -41,17 +39,17 @@ export default () => {
                     }}
                 />
 
-                {/* Segmented loading bar */}
-                <div style={{
-                    width: 460,
-                    maxWidth: '65vw',
-                    display: 'flex',
-                    gap: 3,
-                    marginBottom: 18,
-                }}>
+                <Flex
+                    gap={3}
+                    style={{
+                        width: 460,
+                        maxWidth: '65vw',
+                        marginBottom: 18,
+                    }}
+                >
                     {Array.from({ length: 16 }).map((_, i) => (
-                        <div
-                            key={i}
+                        <Box
+                            key={`seg-${i}`}
                             style={{
                                 flex: 1,
                                 height: 2,
@@ -62,19 +60,18 @@ export default () => {
                             }}
                         />
                     ))}
-                </div>
+                </Flex>
 
-                {/* Message */}
-                <div style={{
-                    fontSize: 13,
-                    letterSpacing: '5px',
-                    textTransform: 'uppercase',
-                    color: TEXT_DIM,
-                    fontWeight: 600,
-                }}>
+                <Text
+                    fz={13}
+                    fw={600}
+                    tt="uppercase"
+                    c={TEXT_DIM}
+                    style={{ letterSpacing: '5px' }}
+                >
                     {message}
-                </div>
-            </div>
+                </Text>
+            </Stack>
 
             <style>{`
                 @keyframes segmentPulse {
@@ -82,6 +79,6 @@ export default () => {
                     50% { opacity: 0.7; }
                 }
             `}</style>
-        </div>
+        </Center>
     );
 };

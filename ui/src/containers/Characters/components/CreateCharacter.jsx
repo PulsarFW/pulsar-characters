@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { Box, Stack, Text } from '@mantine/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { STATE_CREATE } from '../../../util/States';
-import { ACCENT, BG_SLOT, ACCENT_DIM, TEXT_SECONDARY, TEXT_DIM, BORDER_SUBTLE, BORDER_DIM, CARD_WIDTH, CARD_HEIGHT } from '../../../theme';
+import { ACCENT_DIM, BG_SLOT, TEXT_SECONDARY, TEXT_DIM, BORDER_SUBTLE, BORDER_DIM, CARD_WIDTH, CARD_HEIGHT } from '../../../theme';
 
 export default ({ index }) => {
     const dispatch = useDispatch();
     const [hovered, setHovered] = useState(false);
 
     return (
-        <div
+        <Stack
+            align="center"
+            justify="center"
+            gap={14}
             onClick={() => dispatch({ type: 'SET_STATE', payload: { state: STATE_CREATE } })}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
@@ -24,41 +28,37 @@ export default ({ index }) => {
                 transition: 'transform 0.28s cubic-bezier(0.34,1.3,0.64,1), border-color 0.2s ease',
                 cursor: 'pointer',
                 userSelect: 'none',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 14,
                 animation: 'fadeInUp 0.5s ease',
                 animationFillMode: 'both',
                 animationDelay: `${index * 0.09}s`,
             }}
         >
-            <div style={{
-                width: 36,
-                height: 36,
-                borderRadius: '50%',
-                border: `1px solid ${hovered ? ACCENT_DIM : BORDER_DIM}`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 13,
-                color: hovered ? TEXT_SECONDARY : TEXT_DIM,
-                transition: 'all 0.2s ease',
-            }}>
+            <Box
+                style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: '50%',
+                    border: `1px solid ${hovered ? ACCENT_DIM : BORDER_DIM}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 13,
+                    color: hovered ? TEXT_SECONDARY : TEXT_DIM,
+                    transition: 'all 0.2s ease',
+                }}
+            >
                 <FontAwesomeIcon icon="plus" />
-            </div>
-            <span style={{
-                fontSize: 9,
-                letterSpacing: '3px',
-                textTransform: 'uppercase',
-                color: hovered ? TEXT_SECONDARY : TEXT_DIM,
-                fontWeight: 700,
-                transition: 'color 0.2s ease',
-                textAlign: 'center',
-            }}>
+            </Box>
+            <Text
+                fz={9}
+                fw={700}
+                tt="uppercase"
+                ta="center"
+                c={hovered ? TEXT_SECONDARY : TEXT_DIM}
+                style={{ letterSpacing: '3px', transition: 'color 0.2s ease' }}
+            >
                 New<br />Character
-            </span>
-        </div>
+            </Text>
+        </Stack>
     );
 };

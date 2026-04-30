@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Box, Flex, Stack, Text, ScrollArea, Button } from '@mantine/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Nui from '../../util/Nui';
@@ -33,174 +34,134 @@ export default () => {
     };
 
     return (
-        <div style={{ height: '100vh', width: '100vw', display: 'flex', position: 'relative' }}>
+        <Box style={{ height: '100vh', width: '100vw', display: 'flex', position: 'relative' }}>
             {Boolean(motd) && <Motd message={motd} />}
 
             {/* Left spawn panel */}
-            <div style={{
-                width: SPAWN_PANEL_WIDTH,
-                height: '100%',
-                background: BG_BASE,
-                borderRight: `1px solid ${BORDER_SUBTLE}`,
-                display: 'flex',
-                flexDirection: 'column',
-                animation: 'slideInLeft 0.4s ease',
-                animationFillMode: 'both',
-                flexShrink: 0,
-            }}>
-                {/* Header */}
-                <div style={{
-                    padding: '22px 20px 18px',
-                    borderBottom: `1px solid ${BORDER_SUBTLE}`,
+            <Stack
+                gap={0}
+                style={{
+                    width: SPAWN_PANEL_WIDTH,
+                    height: '100%',
+                    background: BG_BASE,
+                    borderRight: `1px solid ${BORDER_SUBTLE}`,
+                    animation: 'slideInLeft 0.4s ease',
+                    animationFillMode: 'both',
                     flexShrink: 0,
-                }}>
-                    <div style={{
-                        fontSize: 9,
-                        letterSpacing: '3.5px',
-                        color: ACCENT,
-                        fontWeight: 700,
-                        textTransform: 'uppercase',
-                        marginBottom: 6,
-                    }}>
+                }}
+            >
+                {/* Header */}
+                <Box style={{ padding: '22px 20px 18px', borderBottom: `1px solid ${BORDER_SUBTLE}`, flexShrink: 0 }}>
+                    <Text
+                        fz={9}
+                        fw={700}
+                        tt="uppercase"
+                        c={ACCENT}
+                        style={{ letterSpacing: '3.5px', marginBottom: 6 }}
+                    >
                         Choose Location
-                    </div>
-                    <div style={{ height: 1, background: BORDER_SUBTLE }} />
-                </div>
+                    </Text>
+                    <Box style={{ height: 1, background: BORDER_SUBTLE }} />
+                </Box>
 
                 {/* Spawn list */}
-                <div style={{ flex: 1, overflowY: 'auto' }}>
+                <ScrollArea style={{ flex: 1 }}>
                     {spawns.map((spawn, i) => (
-                        <SpawnButton key={spawn.id ?? i} spawn={spawn} onPlay={onSpawn} index={i} />
+                        <SpawnButton key={`spawn-${i}`} spawn={spawn} onPlay={onSpawn} index={i} />
                     ))}
-                </div>
+                </ScrollArea>
 
                 {/* Back */}
-                <div style={{
-                    padding: '14px 20px',
-                    borderTop: `1px solid ${BORDER_SUBTLE}`,
-                    flexShrink: 0,
-                }}>
-                    <button
+                <Box style={{ padding: '14px 20px', borderTop: `1px solid ${BORDER_SUBTLE}`, flexShrink: 0 }}>
+                    <Button
+                        variant="subtle"
                         onClick={goBack}
+                        leftSection={<FontAwesomeIcon icon="arrow-left" />}
                         style={{
-                            background: 'none',
-                            border: 'none',
                             color: TEXT_FAINT,
-                            cursor: 'pointer',
                             fontSize: 10,
                             letterSpacing: '2px',
                             textTransform: 'uppercase',
                             fontWeight: 700,
-                            fontFamily: 'Source Sans Pro, sans-serif',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 10,
                             padding: 0,
-                            transition: 'color 0.15s ease',
+                            height: 'auto',
+                            background: 'none',
                         }}
-                        onMouseEnter={(e) => { e.currentTarget.style.color = ACCENT; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.color = TEXT_FAINT; }}
+                        styles={{
+                            root: {
+                                '&:hover': { color: ACCENT, background: 'none' },
+                            },
+                        }}
                     >
-                        <FontAwesomeIcon icon="arrow-left" />
                         Back to Characters
-                    </button>
-                </div>
-            </div>
+                    </Button>
+                </Box>
+            </Stack>
 
             {/* Bottom confirmation bar */}
-            <div style={{
-                position: 'absolute',
-                bottom: 0,
-                left: SPAWN_PANEL_WIDTH,
-                right: 0,
-                background: BG_BASE,
-                borderTop: `1px solid ${selected ? ACCENT : BORDER_SUBTLE}`,
-                padding: '18px 36px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 32,
-                transition: 'border-color 0.3s ease',
-                animation: 'fadeInUp 0.4s ease',
-                animationFillMode: 'both',
-                animationDelay: '0.1s',
-            }}>
+            <Flex
+                align="center"
+                gap={32}
+                style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: SPAWN_PANEL_WIDTH,
+                    right: 0,
+                    background: BG_BASE,
+                    borderTop: `1px solid ${selected ? ACCENT : BORDER_SUBTLE}`,
+                    padding: '18px 36px',
+                    transition: 'border-color 0.3s ease',
+                    animation: 'fadeInUp 0.4s ease',
+                    animationFillMode: 'both',
+                    animationDelay: '0.1s',
+                }}
+            >
                 {/* Spawning as */}
-                <div style={{ flex: 1 }}>
-                    <div style={{
-                        fontSize: 9,
-                        letterSpacing: '2.5px',
-                        color: TEXT_FAINT,
-                        textTransform: 'uppercase',
-                        marginBottom: 4,
-                    }}>
+                <Box style={{ flex: 1 }}>
+                    <Text
+                        fz={9}
+                        tt="uppercase"
+                        c={TEXT_FAINT}
+                        style={{ letterSpacing: '2.5px', marginBottom: 4 }}
+                    >
                         Spawning As
-                    </div>
-                    <div style={{
-                        fontSize: 18,
-                        fontWeight: 700,
-                        color: TEXT_PRIMARY,
-                        letterSpacing: '-0.2px',
-                    }}>
+                    </Text>
+                    <Text fw={700} c={TEXT_PRIMARY} style={{ fontSize: 18, letterSpacing: '-0.2px' }}>
                         {char?.First} {char?.Last}
-                    </div>
-                </div>
+                    </Text>
+                </Box>
 
-                <div style={{ width: 1, height: 32, background: BORDER_SUBTLE, flexShrink: 0 }} />
+                <Box style={{ width: 1, height: 32, background: BORDER_SUBTLE, flexShrink: 0 }} />
 
                 {/* Location */}
-                <div style={{ flex: 1 }}>
-                    <div style={{
-                        fontSize: 9,
-                        letterSpacing: '2.5px',
-                        color: TEXT_FAINT,
-                        textTransform: 'uppercase',
-                        marginBottom: 4,
-                    }}>
+                <Box style={{ flex: 1 }}>
+                    <Text
+                        fz={9}
+                        tt="uppercase"
+                        c={TEXT_FAINT}
+                        style={{ letterSpacing: '2.5px', marginBottom: 4 }}
+                    >
                         Location
-                    </div>
-                    <div style={{
-                        fontSize: 15,
-                        fontWeight: 600,
-                        color: selected ? ACCENT : TEXT_FAINT,
-                        transition: 'color 0.2s ease',
-                    }}>
+                    </Text>
+                    <Text
+                        fw={600}
+                        style={{ fontSize: 15, color: selected ? ACCENT : TEXT_FAINT, transition: 'color 0.2s ease' }}
+                    >
                         {selected ? selected.label : '— Select a spawn point —'}
-                    </div>
-                </div>
+                    </Text>
+                </Box>
 
                 {/* Play button */}
-                <button
+                <Button
                     onClick={onSpawn}
                     disabled={!selected}
-                    style={{
-                        height: 40,
-                        paddingLeft: 32,
-                        paddingRight: 32,
-                        background: selected ? ACCENT : BORDER_SUBTLE,
-                        border: `1px solid ${selected ? ACCENT : BORDER_SUBTLE}`,
-                        color: selected ? '#fff' : TEXT_FAINT,
-                        fontSize: 10,
-                        letterSpacing: '3px',
-                        textTransform: 'uppercase',
-                        fontWeight: 700,
-                        fontFamily: 'Source Sans Pro, sans-serif',
-                        cursor: selected ? 'pointer' : 'default',
-                        transition: 'all 0.2s ease',
-                        flexShrink: 0,
-                        borderRadius: 2,
-                    }}
-                    onMouseEnter={(e) => {
-                        if (!selected) return;
-                        e.currentTarget.style.background = ACCENT_HOVER;
-                    }}
-                    onMouseLeave={(e) => {
-                        if (!selected) return;
-                        e.currentTarget.style.background = ACCENT;
-                    }}
+                    color="brand"
+                    radius={2}
+                    style={{ height: 40, paddingLeft: 32, paddingRight: 32, letterSpacing: '3px', fontSize: 10 }}
                 >
                     Play
-                </button>
-            </div>
-        </div>
+                </Button>
+            </Flex>
+        </Box>
     );
 };

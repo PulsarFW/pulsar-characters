@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Modal, Button, Group, Text } from '@mantine/core';
+import { Box, Text, Modal, Button, Group } from '@mantine/core';
 
 import Nui from '../../../util/Nui';
 import { SelectCharacter, DeleteCharacter } from '../../../util/NuiEvents';
@@ -53,7 +53,7 @@ export default ({ character, index }) => {
 
     return (
         <>
-            <div
+            <Box
                 onClick={onSelect}
                 onDoubleClick={onPlay}
                 onContextMenu={(e) => { e.preventDefault(); setOpen(true); }}
@@ -84,104 +84,107 @@ export default ({ character, index }) => {
                 }}
             >
                 {/* Watermark index */}
-                <div style={{
-                    position: 'absolute',
-                    bottom: -18,
-                    right: -6,
-                    fontSize: 130,
-                    fontWeight: 900,
-                    lineHeight: 1,
-                    letterSpacing: '-6px',
-                    color: 'rgba(255,255,255,0.02)',
-                    userSelect: 'none',
-                    pointerEvents: 'none',
-                }}>
+                <Text
+                    style={{
+                        position: 'absolute',
+                        bottom: -18,
+                        right: -6,
+                        fontSize: 130,
+                        fontWeight: 900,
+                        lineHeight: 1,
+                        letterSpacing: '-6px',
+                        color: 'rgba(255,255,255,0.02)',
+                        userSelect: 'none',
+                        pointerEvents: 'none',
+                    }}
+                >
                     {String(index + 1).padStart(2, '0')}
-                </div>
+                </Text>
 
                 {/* Slot label */}
-                <div style={{
-                    fontSize: 9,
-                    fontWeight: 700,
-                    letterSpacing: '3px',
-                    color: isActive ? ACCENT : TEXT_DIM,
-                    textTransform: 'uppercase',
-                    transition: 'color 0.2s ease',
-                    marginBottom: 'auto',
-                }}>
+                <Text
+                    fz={9}
+                    fw={700}
+                    tt="uppercase"
+                    c={isActive ? ACCENT : TEXT_DIM}
+                    style={{ letterSpacing: '3px', transition: 'color 0.2s ease', marginBottom: 'auto' }}
+                >
                     Slot {String(index + 1).padStart(2, '0')}
-                </div>
+                </Text>
 
-                <div style={{ flex: 1 }} />
+                <Box style={{ flex: 1 }} />
 
                 {/* Name */}
-                <div style={{
-                    fontSize: 22,
-                    fontWeight: 700,
-                    lineHeight: 1.2,
-                    color: isActive || hovered ? TEXT_PRIMARY : TEXT_SECONDARY,
-                    letterSpacing: '-0.3px',
-                    marginBottom: 10,
-                    transition: 'color 0.2s ease',
-                }}>
+                <Text
+                    fw={700}
+                    c={isActive || hovered ? TEXT_PRIMARY : TEXT_SECONDARY}
+                    style={{
+                        fontSize: 22,
+                        lineHeight: 1.2,
+                        letterSpacing: '-0.3px',
+                        marginBottom: 10,
+                        transition: 'color 0.2s ease',
+                    }}
+                >
                     {character.First}<br />{character.Last}
-                </div>
+                </Text>
 
                 {/* Job */}
-                <div style={{
-                    fontSize: 11,
-                    color: isActive ? TEXT_SECONDARY : TEXT_DIM,
-                    letterSpacing: '0.2px',
-                    lineHeight: 1.5,
-                    marginBottom: 3,
-                    transition: 'color 0.2s ease',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                }}>
+                <Text
+                    fz={11}
+                    c={isActive ? TEXT_SECONDARY : TEXT_DIM}
+                    style={{
+                        letterSpacing: '0.2px',
+                        lineHeight: 1.5,
+                        marginBottom: 3,
+                        transition: 'color 0.2s ease',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                    }}
+                >
                     {jobLabel()}
-                </div>
+                </Text>
 
                 {/* SID */}
-                <div style={{
-                    fontSize: 10,
-                    color: TEXT_FAINT,
-                    letterSpacing: '1px',
-                    marginBottom: 14,
-                }}>
+                <Text
+                    fz={10}
+                    c={TEXT_FAINT}
+                    style={{ letterSpacing: '1px', marginBottom: 14 }}
+                >
                     #{character.SID}
-                </div>
+                </Text>
 
                 {/* Separator */}
-                <div style={{
-                    height: 1,
-                    marginBottom: 10,
-                    background: isActive
-                        ? `linear-gradient(90deg, ${ACCENT}, transparent)`
-                        : 'rgba(255,255,255,0.03)',
-                    transition: 'background 0.2s ease',
-                }} />
+                <Box
+                    style={{
+                        height: 1,
+                        marginBottom: 10,
+                        background: isActive
+                            ? `linear-gradient(90deg, ${ACCENT}, transparent)`
+                            : 'rgba(255,255,255,0.03)',
+                        transition: 'background 0.2s ease',
+                    }}
+                />
 
                 {/* Last played */}
-                <div style={{
-                    fontSize: 14,
-                    fontWeight: 600,
-                    color: isActive ? ACCENT : TEXT_DIM,
-                    letterSpacing: '0.2px',
-                    transition: 'color 0.2s ease',
-                    marginBottom: 2,
-                }}>
+                <Text
+                    fw={600}
+                    fz={14}
+                    c={isActive ? ACCENT : TEXT_DIM}
+                    style={{ letterSpacing: '0.2px', transition: 'color 0.2s ease', marginBottom: 2 }}
+                >
                     {relativeTime(character.LastPlayed)}
-                </div>
-                <div style={{
-                    fontSize: 8,
-                    color: TEXT_FAINT,
-                    letterSpacing: '1.5px',
-                    textTransform: 'uppercase',
-                }}>
+                </Text>
+                <Text
+                    fz={8}
+                    c={TEXT_FAINT}
+                    tt="uppercase"
+                    style={{ letterSpacing: '1.5px' }}
+                >
                     Last Played
-                </div>
-            </div>
+                </Text>
+            </Box>
 
             <Modal
                 opened={open}
