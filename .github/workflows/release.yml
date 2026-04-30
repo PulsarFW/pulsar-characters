@@ -23,7 +23,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
-      - name: Install and build UI
+      - name: Install and build
         run: |
           cd ui
           bun install
@@ -41,6 +41,7 @@ jobs:
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
+        id: release
         with:
           tag_name: v${{ github.event.inputs.version }}
           name: "v${{ github.event.inputs.version }}"
@@ -48,12 +49,17 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Notify Discord
-        uses: SethCohen/github-releases-to-discord@v1.3.2
-        with:
-          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
-          color: "8141549"
-          username: "Pulsar Framework"
-          avatar_url: "https://raw.githubusercontent.com/${{ github.repository_owner }}/PulsarFW/main/PulsarFramework.png"
-          footer_title: "Pulsar Framework"
-          footer_icon_url: "https://raw.githubusercontent.com/${{ github.repository_owner }}/PulsarFW/main/PulsarFramework.png"
-          footer_timestamp: true
+        run: |
+          curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"username\": \"Pulsar Framework\",
+              \"avatar_url\": \"https://raw.githubusercontent.com/${{ github.repository_owner }}/PulsarFW/main/PulsarFramework.png\",
+              \"embeds\": [{
+                \"title\": \"\U0001F680 ${{ github.event.repository.name }} v${{ github.event.inputs.version }}\",
+                \"url\": \"${{ steps.release.outputs.url }}\",
+                \"color\": 8141549,
+                \"description\": \"A new version has been released. Click to view the full changelog.\",
+                \"footer\": { \"text\": \"Pulsar Framework\" }
+              }]
+            }"
