@@ -1,63 +1,59 @@
-name: Create release
+name: Release
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version number (e.g. 1.2.0)"
+        required: true
 
 permissions:
   contents: write
 
 jobs:
-  create-release:
+  release:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Install zip
-        run: sudo apt install zip
-
-      - name: Get latest code
+      - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          fetch-depth: 0
 
-      - name: Install dependencies
-        run: npm install
-        working-directory: ui
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
-      - name: Build UI
-        run: npm run build
-        working-directory: ui
-
-      - name: Bundle files
+      - name: Install and build UI
         run: |
-          mkdir -p ./temp/pulsar-characters
-          cp ./{README.md,fxmanifest.lua} ./temp/pulsar-characters
-          cp -r ./{client,server,shared} ./temp/pulsar-characters
-          cp -r ./ui ./temp/pulsar-characters/ui
-          rm -rf ./temp/pulsar-characters/ui/node_modules
-          cd ./temp && zip -r ../pulsar-characters.zip ./pulsar-characters
+          cd ui
+          bun install
+          bun run build
 
-      - name: Create release
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create and push tag
+        run: |
+          git tag v${{ github.event.inputs.version }}
+          git push origin v${{ github.event.inputs.version }}
+
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: "PULSAR-CHARACTERS ${{ github.ref_name }}"
-          body: |
-            ![Pulsar Framework](https://r2.fivemanage.com/GPYOH8Hq4GPyAY7czrgLe/pulsarbanner.png)
+          tag_name: v${{ github.event.inputs.version }}
+          name: "v${{ github.event.inputs.version }}"
+          generate_release_notes: true
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-            ## PULSAR-CHARACTERS ${{ github.ref_name }}
-
-            Character creation, selection, and lifecycle management for Pulsar Framework.
-
-            ### Installation
-            1. Download `pulsar-characters.zip` below
-            2. Extract into your server's `resources` folder
-            3. Add `ensure pulsar-characters` to your `server.cfg`
-
-            ---
-            ![Pulsar Framework](https://img.shields.io/badge/Pulsar-Framework-7c3aed?style=flat-square)
-            ![Built for FiveM](https://img.shields.io/badge/Built_for-FiveM-F40552?style=flat-square)
-          files: pulsar-characters.zip
-          prerelease: false
+      - name: Notify Discord
+        uses: SethCohen/github-releases-to-discord@v1.3.2
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+          color: "8141549"
+          username: "Pulsar Framework"
+          avatar_url: "https://raw.githubusercontent.com/${{ github.repository_owner }}/PulsarFW/main/PulsarFramework.png"
+          footer_title: "Pulsar Framework"
+          footer_icon_url: "https://raw.githubusercontent.com/${{ github.repository_owner }}/PulsarFW/main/PulsarFramework.png"
+          footer_timestamp: true
