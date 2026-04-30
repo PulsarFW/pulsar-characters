@@ -180,8 +180,10 @@ function RegisterCallbacks()
 		end
 
 		local dbData = exports['pulsar-core']:CloneDeep(doc)
+		local jsonFields = {}
+		for _, f in ipairs(TablesToDecode) do jsonFields[f] = true end
 		for k, v in pairs(dbData) do
-			if type(v) == 'table' then
+			if type(v) == 'table' or (type(v) == 'string' and jsonFields[k]) then
 				dbData[k] = json.encode(v)
 			end
 		end
