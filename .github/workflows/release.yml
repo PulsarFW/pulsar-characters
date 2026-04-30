@@ -29,6 +29,16 @@ jobs:
           bun install
           bun run build
 
+      - name: Get release name
+        id: info
+        run: |
+          REPO="${{ github.event.repository.name }}"
+          echo "upper=${REPO^^}" >> $GITHUB_OUTPUT
+
+      - name: Create zip
+        run: |
+          zip -r pulsar-characters.zip .             --exclude='*/.git/*'             --exclude='*/.github/*'             --exclude='*/node_modules/*'
+
       - name: Configure git
         run: |
           git config user.name "github-actions[bot]"
@@ -41,25 +51,22 @@ jobs:
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
-        id: release
         with:
           tag_name: v${{ github.event.inputs.version }}
-          name: "v${{ github.event.inputs.version }}"
-          generate_release_notes: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+          name: "${{ steps.info.outputs.upper }} ${{ github.event.inputs.version }}"
+          body: |
+            ![${{ steps.info.outputs.upper }}](https://r2.fivemanage.com/GPYOH8Hq4GPyAY7czrgLe/pulsarbanner.png)
 
-      - name: Notify Discord
-        run: |
-          curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" \
-            -H "Content-Type: application/json" \
-            -d "{
-              \"username\": \"Pulsar Framework\",
-              \"avatar_url\": \"https://raw.githubusercontent.com/${{ github.repository_owner }}/PulsarFW/main/PulsarFramework.png\",
-              \"embeds\": [{
-                \"title\": \"\U0001F680 ${{ github.event.repository.name }} v${{ github.event.inputs.version }}\",
-                \"url\": \"${{ steps.release.outputs.url }}\",
-                \"color\": 8141549,
-                \"description\": \"A new version has been released. Click to view the full changelog.\",
-                \"footer\": { \"text\": \"Pulsar Framework\" }
-              }]
-            }"
+            ## ${{ steps.info.outputs.upper }} ${{ github.event.inputs.version }}
+
+            ### Installation
+            1. Download `pulsar-characters.zip` below
+            2. Extract into your server's `resources` folder
+            3. Add `ensure pulsar-characters` to your `server.cfg`
+
+            ---
+            ![Pulsar Framework](https://img.shields.io/badge/Pulsar-Framework-7c3aed?style=flat-square)
+            ![Built for FiveM](https://img.shields.io/badge/Built_for-FiveM-F40552?style=flat-square)
+          files: pulsar-characters.zip
+          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
