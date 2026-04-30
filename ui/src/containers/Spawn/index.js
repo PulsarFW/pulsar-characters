@@ -1,24 +1,25 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Group } from '@mantine/core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Nui from '../../util/Nui';
 import { Motd } from '../../components';
-import logo from '../../assets/imgs/logo_banner.png';
 import SpawnButton from './components/SpawnButton';
 import { STATE_CHARACTERS } from '../../util/States';
 import { PlayCharacter } from '../../util/NuiEvents';
+import { ACCENT, ACCENT_HOVER, BG_BASE, TEXT_PRIMARY, TEXT_FAINT, BORDER_SUBTLE, SPAWN_PANEL_WIDTH } from '../../theme';
 
 export default () => {
     const dispatch = useDispatch();
 
-    const motd = useSelector((state) => state.characters.motd);
-    const spawns = useSelector((state) => state.spawn.spawns);
+    const motd     = useSelector((state) => state.characters.motd);
+    const spawns   = useSelector((state) => state.spawn.spawns);
     const selected = useSelector((state) => state.spawn.selected);
-    const selectedChar = useSelector((state) => state.characters.selected);
+    const char     = useSelector((state) => state.characters.selected);
 
     const onSpawn = () => {
-        Nui.send(PlayCharacter, { spawn: selected, character: selectedChar });
+        if (!selected) return;
+        Nui.send(PlayCharacter, { spawn: selected, character: char });
         dispatch({ type: 'LOADING_SHOW', payload: { message: 'Spawning' } });
         dispatch({ type: 'UPDATE_PLAYED' });
         dispatch({ type: 'DESELECT_CHARACTER' });
@@ -32,68 +33,173 @@ export default () => {
     };
 
     return (
-        <div style={{ height: '100vh', width: '100vw', position: 'relative' }}>
+        <div style={{ height: '100vh', width: '100vw', display: 'flex', position: 'relative' }}>
             {Boolean(motd) && <Motd message={motd} />}
-            <img src={logo} style={{ width: 300, position: 'absolute', right: 0, top: 0 }} />
 
+            {/* Left spawn panel */}
             <div style={{
-                position: 'absolute',
-                top: 0,
-                bottom: 0,
-                left: 0,
-                margin: 'auto',
-                width: 'fit-content',
-                maxWidth: 310,
-                maxHeight: 600,
+                width: SPAWN_PANEL_WIDTH,
                 height: '100%',
-                overflowY: 'auto',
-                padding: '8px 0',
+                background: BG_BASE,
+                borderRight: `1px solid ${BORDER_SUBTLE}`,
+                display: 'flex',
+                flexDirection: 'column',
+                animation: 'slideInLeft 0.4s ease',
+                animationFillMode: 'both',
+                flexShrink: 0,
             }}>
-                {spawns.map((spawn, i) => (
-                    <SpawnButton key={i} spawn={spawn} onPlay={onSpawn} />
-                ))}
+                {/* Header */}
+                <div style={{
+                    padding: '22px 20px 18px',
+                    borderBottom: `1px solid ${BORDER_SUBTLE}`,
+                    flexShrink: 0,
+                }}>
+                    <div style={{
+                        fontSize: 9,
+                        letterSpacing: '3.5px',
+                        color: ACCENT,
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        marginBottom: 6,
+                    }}>
+                        Choose Location
+                    </div>
+                    <div style={{ height: 1, background: BORDER_SUBTLE }} />
+                </div>
+
+                {/* Spawn list */}
+                <div style={{ flex: 1, overflowY: 'auto' }}>
+                    {spawns.map((spawn, i) => (
+                        <SpawnButton key={spawn.id ?? i} spawn={spawn} onPlay={onSpawn} index={i} />
+                    ))}
+                </div>
+
+                {/* Back */}
+                <div style={{
+                    padding: '14px 20px',
+                    borderTop: `1px solid ${BORDER_SUBTLE}`,
+                    flexShrink: 0,
+                }}>
+                    <button
+                        onClick={goBack}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            color: TEXT_FAINT,
+                            cursor: 'pointer',
+                            fontSize: 10,
+                            letterSpacing: '2px',
+                            textTransform: 'uppercase',
+                            fontWeight: 700,
+                            fontFamily: 'Source Sans Pro, sans-serif',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 10,
+                            padding: 0,
+                            transition: 'color 0.15s ease',
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.color = ACCENT; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.color = TEXT_FAINT; }}
+                    >
+                        <FontAwesomeIcon icon="arrow-left" />
+                        Back to Characters
+                    </button>
+                </div>
             </div>
 
+            {/* Bottom confirmation bar */}
             <div style={{
-                height: 'fit-content',
-                width: 300,
                 position: 'absolute',
+                bottom: 0,
+                left: SPAWN_PANEL_WIDTH,
                 right: 0,
-                left: 0,
-                bottom: 40,
-                margin: 'auto',
-                borderLeft: '4px solid #E5A502',
+                background: BG_BASE,
+                borderTop: `1px solid ${selected ? ACCENT : BORDER_SUBTLE}`,
+                padding: '18px 36px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 32,
+                transition: 'border-color 0.3s ease',
+                animation: 'fadeInUp 0.4s ease',
+                animationFillMode: 'both',
+                animationDelay: '0.1s',
             }}>
-                <div style={{ background: 'rgba(15,15,15,0.8)', padding: 10 }}>
-                    <div style={{ fontSize: 18, color: '#aaa' }}>Spawning As</div>
-                    <div style={{ fontSize: 22, color: '#E5A502', fontWeight: 'bold' }}>
-                        {selectedChar?.First} {selectedChar?.Last}
+                {/* Spawning as */}
+                <div style={{ flex: 1 }}>
+                    <div style={{
+                        fontSize: 9,
+                        letterSpacing: '2.5px',
+                        color: TEXT_FAINT,
+                        textTransform: 'uppercase',
+                        marginBottom: 4,
+                    }}>
+                        Spawning As
                     </div>
-                    <div style={{ fontSize: 18, color: '#aaa', marginTop: 4 }}>At</div>
-                    <div style={{ fontSize: 22, color: '#E5A502', fontWeight: 'bold' }}>
-                        {selected ? selected.label : '(No Spawn Selected)'}
+                    <div style={{
+                        fontSize: 18,
+                        fontWeight: 700,
+                        color: TEXT_PRIMARY,
+                        letterSpacing: '-0.2px',
+                    }}>
+                        {char?.First} {char?.Last}
                     </div>
                 </div>
-                <Group grow gap={0}>
-                    <Button
-                        radius={0}
-                        color="red"
-                        onClick={goBack}
-                        style={{ borderRadius: 0 }}
-                    >
-                        Cancel
-                    </Button>
-                    {Boolean(selected) && (
-                        <Button
-                            radius={0}
-                            color="green"
-                            onClick={onSpawn}
-                            style={{ borderRadius: 0 }}
-                        >
-                            Play
-                        </Button>
-                    )}
-                </Group>
+
+                <div style={{ width: 1, height: 32, background: BORDER_SUBTLE, flexShrink: 0 }} />
+
+                {/* Location */}
+                <div style={{ flex: 1 }}>
+                    <div style={{
+                        fontSize: 9,
+                        letterSpacing: '2.5px',
+                        color: TEXT_FAINT,
+                        textTransform: 'uppercase',
+                        marginBottom: 4,
+                    }}>
+                        Location
+                    </div>
+                    <div style={{
+                        fontSize: 15,
+                        fontWeight: 600,
+                        color: selected ? ACCENT : TEXT_FAINT,
+                        transition: 'color 0.2s ease',
+                    }}>
+                        {selected ? selected.label : '— Select a spawn point —'}
+                    </div>
+                </div>
+
+                {/* Play button */}
+                <button
+                    onClick={onSpawn}
+                    disabled={!selected}
+                    style={{
+                        height: 40,
+                        paddingLeft: 32,
+                        paddingRight: 32,
+                        background: selected ? ACCENT : BORDER_SUBTLE,
+                        border: `1px solid ${selected ? ACCENT : BORDER_SUBTLE}`,
+                        color: selected ? '#fff' : TEXT_FAINT,
+                        fontSize: 10,
+                        letterSpacing: '3px',
+                        textTransform: 'uppercase',
+                        fontWeight: 700,
+                        fontFamily: 'Source Sans Pro, sans-serif',
+                        cursor: selected ? 'pointer' : 'default',
+                        transition: 'all 0.2s ease',
+                        flexShrink: 0,
+                        borderRadius: 2,
+                    }}
+                    onMouseEnter={(e) => {
+                        if (!selected) return;
+                        e.currentTarget.style.background = ACCENT_HOVER;
+                    }}
+                    onMouseLeave={(e) => {
+                        if (!selected) return;
+                        e.currentTarget.style.background = ACCENT;
+                    }}
+                >
+                    Play
+                </button>
             </div>
         </div>
     );

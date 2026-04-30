@@ -2,6 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Group } from '@mantine/core';
 import { STATE_CHARACTERS, STATE_CREATE, STATE_SPAWN } from '../util/States';
+import { ACCENT, BG_BASE } from '../theme';
 
 const STATES = [
     { key: STATE_CHARACTERS, label: 'Characters' },
@@ -15,6 +16,7 @@ export default () => {
     const characters = useSelector((s) => s.characters.characters);
 
     const go = (state) => {
+        dispatch({ type: 'LOADING_HIDE' });
         if (state === STATE_SPAWN) {
             dispatch({ type: 'SELECT_CHARACTER', payload: { character: characters[0] } });
         }
@@ -27,15 +29,21 @@ export default () => {
             top: 10,
             left: 10,
             zIndex: 9999,
-            background: 'rgba(0,0,0,0.9)',
-            border: '1px solid #E5A502',
-            borderRadius: 4,
+            background: BG_BASE,
+            border: `1px solid ${ACCENT}`,
+            borderRadius: 3,
             padding: '6px 10px',
             display: 'flex',
             alignItems: 'center',
             gap: 8,
         }}>
-            <span style={{ fontSize: 10, color: '#E5A502', fontWeight: 'bold', letterSpacing: 1 }}>
+            <span style={{
+                fontSize: 9,
+                color: ACCENT,
+                fontWeight: 700,
+                letterSpacing: '2px',
+                textTransform: 'uppercase',
+            }}>
                 DEV
             </span>
             <Group gap={4}>

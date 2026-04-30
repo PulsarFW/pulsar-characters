@@ -1,31 +1,49 @@
 import React from 'react';
+import { ACCENT, ACCENT_DIM, BG_BASE, TEXT_PRIMARY } from '../../theme';
 
 export default ({ message }) => (
     <div style={{
         position: 'absolute',
-        top: '5%',
-        left: 0,
-        height: 40,
+        top: 24,
+        left: 24,
+        height: 36,
         width: 'fit-content',
+        maxWidth: 520,
         pointerEvents: 'none',
         display: 'flex',
-        zIndex: 1,
-        background: 'rgba(15,15,15,0.8)',
-        borderLeft: '4px solid #247ba5',
+        alignItems: 'stretch',
+        zIndex: 10,
+        background: BG_BASE,
+        borderLeft: `2px solid ${ACCENT}`,
+        animation: 'slideInLeft 0.4s ease',
+        animationFillMode: 'both',
     }}>
-        <small style={{ fontSize: 12, display: 'block', lineHeight: '40px', padding: '0 5px', color: '#aaa' }}>
+        <span style={{
+            fontSize: 9,
+            letterSpacing: '2.5px',
+            textTransform: 'uppercase',
+            color: ACCENT,
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            padding: '0 10px',
+            borderRight: `1px solid ${ACCENT_DIM}`,
+            flexShrink: 0,
+        }}>
             MOTD
-        </small>
-        <div style={{
-            fontSize: 18,
-            lineHeight: '40px',
-            textShadow: '0 0 5px #000',
-            paddingLeft: 15,
-            paddingRight: 15,
-            borderLeft: '1px solid rgba(255,255,255,0.12)',
-            color: '#fff',
+        </span>
+        <span style={{
+            fontSize: 13,
+            color: TEXT_PRIMARY,
+            display: 'flex',
+            alignItems: 'center',
+            padding: '0 14px',
+            letterSpacing: '0.3px',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
         }}>
             {message}
-        </div>
+        </span>
     </div>
 );

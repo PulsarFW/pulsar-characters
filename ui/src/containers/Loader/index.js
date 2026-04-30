@@ -1,8 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Progress } from '@mantine/core';
 
-import logo from '../../assets/imgs/logo_banner.png';
+import { ACCENT, TEXT_DIM, LOGO } from '../../theme';
 
 export default () => {
     const loading = useSelector((state) => state.loader.loading);
@@ -12,39 +11,77 @@ export default () => {
 
     return (
         <div style={{
-            height: 'fit-content',
-            width: 800,
             position: 'absolute',
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            margin: 'auto',
-            background: '#0f0f0f',
-            borderLeft: '4px solid #E5A502',
+            inset: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 900,
+            pointerEvents: 'none',
         }}>
-            <div style={{ width: '100%', padding: 25, textAlign: 'center' }}>
+            <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 0,
+                animation: 'fadeInUp 0.5s ease',
+                animationFillMode: 'both',
+            }}>
+                {/* Logo */}
                 <img
-                    src={logo}
+                    src={LOGO}
+                    alt="Pulsar"
                     style={{
-                        maxWidth: 450,
-                        width: '100%',
-                        borderBottom: '2px solid rgba(255,255,255,0.12)',
-                        marginBottom: 15,
+                        width: 460,
+                        maxWidth: '65vw',
+                        display: 'block',
+                        marginBottom: 36,
+                        transform: 'translateX(-10%)',
                     }}
                 />
-                <div style={{ color: '#fff', fontSize: 28, textShadow: '0 0 5px #000', padding: 15 }}>
+
+                {/* Segmented loading bar */}
+                <div style={{
+                    width: 460,
+                    maxWidth: '65vw',
+                    display: 'flex',
+                    gap: 3,
+                    marginBottom: 18,
+                }}>
+                    {Array.from({ length: 16 }).map((_, i) => (
+                        <div
+                            key={i}
+                            style={{
+                                flex: 1,
+                                height: 2,
+                                background: ACCENT,
+                                opacity: 0.15,
+                                animation: 'segmentPulse 1.6s ease-in-out infinite',
+                                animationDelay: `${i * 0.1}s`,
+                            }}
+                        />
+                    ))}
+                </div>
+
+                {/* Message */}
+                <div style={{
+                    fontSize: 13,
+                    letterSpacing: '5px',
+                    textTransform: 'uppercase',
+                    color: TEXT_DIM,
+                    fontWeight: 600,
+                }}>
                     {message}
                 </div>
             </div>
-            <Progress
-                value={100}
-                animated
-                color="brand"
-                radius={0}
-                size={4}
-                style={{ background: '#0f0f0f' }}
-            />
+
+            <style>{`
+                @keyframes segmentPulse {
+                    0%, 100% { opacity: 0.1; }
+                    50% { opacity: 0.7; }
+                }
+            `}</style>
         </div>
     );
 };
