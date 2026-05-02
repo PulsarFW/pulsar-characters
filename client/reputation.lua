@@ -46,6 +46,24 @@ exports('RepHasLevel', function(id, level)
 	end
 end)
 
+exports('GetCharData', function(key)
+	local char = LocalPlayer.state.Character
+	if not char then return nil end
+	return char:GetData(key)
+end)
+
+exports('GetJobData', function(jobName)
+	local char = LocalPlayer.state.Character
+	if not char then return false end
+	local jobs = char:GetData("Jobs") or {}
+	for _, job in ipairs(jobs) do
+		if job.Id == jobName then
+			return job
+		end
+	end
+	return false
+end)
+
 exports('RepGetLevelData', function(id)
 	if GlobalState[string.format("Rep:%s", id)] ~= nil then
 		local reps = LocalPlayer.state.Character:GetData("Reputations") or {}
